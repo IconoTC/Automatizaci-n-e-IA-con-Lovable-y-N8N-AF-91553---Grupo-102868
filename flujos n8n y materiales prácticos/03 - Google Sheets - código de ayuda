@@ -1,0 +1,78 @@
+// COPIAR Y PEGAR ESTE CÓDIGO EN EL FLUJO CONSTRUÍDO EN CLASE, SIGUIENDO LAS INSTRUCCIONES DEL FORMADOR.
+
+// Obtener todos los items del flujo entrante en el nodo
+const items = $input.all();
+
+// --- PASO 1: Extracción del atributo 'Age' (edades de clientes) --- //
+
+// Función que devuelve el primer campo numérico que corresponda con la edad
+function extractAge(obj) {
+if (!obj || typeof obj !== 'object') return null;
+
+// Se busca de modo que no haya sensibilidad a mayúsculas y minúsculas
+for (const key of Object.keys(obj)) {
+if (key.toLowerCase() === "age") {
+const val = Number(obj[key]);
+return !isNaN(val) ? val : null;
+}
+}
+
+// Probar por si acaso el objeto JSON está anidado
+if (obj.json && typeof obj.json === "object") {
+return extractAge(obj.json);
+}
+
+return null;
+}
+
+const ages = items
+.map(item => extractAge(item.json ?? item))
+.filter(a => typeof a === "number" && !isNaN(a));
+
+
+ // Si no hay datos recuperados, crear mensaje de error para siguiente nodo de QuickChart
+if (ages.length === 0) {
+return [
+{
+json: {
+labels: ["No data"],
+data: [0],
+debug_note: "No ages found. Check column name (expected: 'age' or 'Age')."
+}
+}
+];
+}     
+
+
+// --- PASO 2: Construcción dinámica de 10 intervalos de edad (bins) --- //
+
+const BIN_SIZE = 10;
+
+const minAge = Math.min(...ages);
+const maxAge = Math.max(...ages);
+
+const start = Math.floor(minAge / BIN_SIZE) * BIN_SIZE;
+const end = Math.ceil(maxAge / BIN_SIZE) * BIN_SIZE;
+
+let labels = [];
+let data = [];
+
+for (let binStart = start; binStart < end; binStart += BIN_SIZE) {
+const binEnd = binStart + BIN_SIZE - 1;
+
+labels.push(`${binStart}-${binEnd}`);
+
+const count = ages.filter(a => a >= binStart && a <= binEnd).length;
+data.push(count);
+}
+
+// --- PASO 3: Devolver objeto JSON apto para posterior nodo de QuickChart --- //
+
+return [
+{
+json: {
+labels,
+data
+}
+}
+];
