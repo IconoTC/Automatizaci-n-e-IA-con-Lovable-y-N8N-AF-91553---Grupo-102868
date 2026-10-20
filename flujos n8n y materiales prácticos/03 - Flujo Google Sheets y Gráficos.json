@@ -1,0 +1,256 @@
+{
+  "name": "03 - Flujo Google Sheets y Gráficos",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        64,
+        176
+      ],
+      "id": "1701b93c-159c-4b4f-92d7-6936bed61ab8",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1CPklMEssI5ycoBVYxLiaHHZMistp6HvJhpHseUB8i9Q",
+          "mode": "list",
+          "cachedResultName": "Mall customers spreadsheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CPklMEssI5ycoBVYxLiaHHZMistp6HvJhpHseUB8i9Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CPklMEssI5ycoBVYxLiaHHZMistp6HvJhpHseUB8i9Q/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        336,
+        176
+      ],
+      "id": "59331716-4cea-41e8-8881-90ac6095fe6d",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1yLIkkswexc7hPFB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener todos los items del flujo entrante en el nodo\nconst items = $input.all();\n\n// --- PASO 1: Extracción del atributo 'Age' (edades de clientes) --- //\n\n// Función que devuelve el primer campo numérico que corresponda con la edad\nfunction extractAge(obj) {\nif (!obj || typeof obj !== 'object') return null;\n\n// Se busca de modo que no haya sensibilidad a mayúsculas y minúsculas\nfor (const key of Object.keys(obj)) {\nif (key.toLowerCase() === \"age\") {\nconst val = Number(obj[key]);\nreturn !isNaN(val) ? val : null;\n}\n}\n\n// Probar por si acaso el objeto JSON está anidado\nif (obj.json && typeof obj.json === \"object\") {\nreturn extractAge(obj.json);\n}\n\nreturn null;\n}\n\nconst ages = items\n.map(item => extractAge(item.json ?? item))\n.filter(a => typeof a === \"number\" && !isNaN(a));\n\n\n // Si no hay datos recuperados, crear mensaje de error para siguiente nodo de QuickChart\nif (ages.length === 0) {\nreturn [\n{\njson: {\nlabels: [\"No data\"],\ndata: [0],\ndebug_note: \"No ages found. Check column name (expected: 'age' or 'Age').\"\n}\n}\n];\n}     \n\n\n// --- PASO 2: Construcción dinámica de 10 intervalos de edad (bins) --- //\n\nconst BIN_SIZE = 10;\n\nconst minAge = Math.min(...ages);\nconst maxAge = Math.max(...ages);\n\nconst start = Math.floor(minAge / BIN_SIZE) * BIN_SIZE;\nconst end = Math.ceil(maxAge / BIN_SIZE) * BIN_SIZE;\n\nlet labels = [];\nlet data = [];\n\nfor (let binStart = start; binStart < end; binStart += BIN_SIZE) {\nconst binEnd = binStart + BIN_SIZE - 1;\n\nlabels.push(`${binStart}-${binEnd}`);\n\nconst count = ages.filter(a => a >= binStart && a <= binEnd).length;\ndata.push(count);\n}\n\n// --- PASO 3: Devolver objeto JSON apto para posterior nodo de QuickChart --- //\n\nreturn [\n{\njson: {\nlabels,\ndata\n}\n}\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        544,
+        176
+      ],
+      "id": "b6e6321c-c678-46a7-b679-988813ea4dbd",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "chartType": "pie",
+        "labelsMode": "array",
+        "labelsArray": "={{ $json.labels }}",
+        "data": "={{ $json.data }}",
+        "output": "=data",
+        "chartOptions": {},
+        "datasetOptions": {}
+      },
+      "type": "n8n-nodes-base.quickChart",
+      "typeVersion": 1,
+      "position": [
+        800,
+        176
+      ],
+      "id": "349cb781-1099-4cf0-a102-ab37cf6b3b1b",
+      "name": "QuickChart"
+    },
+    {
+      "parameters": {
+        "sendTo": "gakudo.learn@gmail.com",
+        "subject": "Gráfico hecho con n8n",
+        "message": "Ver adjunto",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1088,
+        176
+      ],
+      "id": "97225cca-fd62-43f1-b8b7-c9315bec69e6",
+      "name": "Send a message",
+      "webhookId": "dc764539-0c2f-4e86-86ab-c6db64253df2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4YCvIQGWdZW6JHn3",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Nuestro trigger está configurado para ejecutarse 1 vez cada minuto si lo publicásemos en modo Producción",
+        "height": 112,
+        "width": 224,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        32
+      ],
+      "typeVersion": 1,
+      "id": "bad0b951-3cf9-4c23-8c28-37be00db4a13",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Aqui accedemos a una hoja de cálculo de Google Sheets en nuestra cuenta google vinculada, y obtenemos los datos de 200 clientes",
+        "height": 112,
+        "width": 224,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        32
+      ],
+      "typeVersion": 1,
+      "id": "31f93b25-f63f-4984-b3a9-71d8988dcf1e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Este nodo contiene código Javascript que analiza los 200 clientes, genera varios grupos de edad automáticamente, y calcula un recuento (frecuencias) del num. clientes en cada grupo de edad.",
+        "width": 224,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        496,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "f0899554-1072-4643-bc15-3fa84a73ffc1",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Aqui, a partir de los grupos de edad (etiquetas o categorias), y los recuentos calculados, creados un gráfico de un tipo determinado, p.ej. histograma de barras o diagrama de sectores.",
+        "width": 224,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        736,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "f3bb80fd-a322-4b72-9fbc-be1b6d54a7b1",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "Generamos y enviamos un mensaje de correo electrónico desde nuestro Gmail vinculada, que incluye el gráfico generado como adjunto.\n\n",
+        "width": 272,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1008,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "1685f6cb-4a78-46b7-b7a1-39ddbeeaeea9",
+      "name": "Sticky Note4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "QuickChart",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QuickChart": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "fb1ecc7e-1b84-4729-a526-0db7f5ebf5d2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "960175be3c41fb259bea1cdf813ec95bc6101f03dad7f1c90348629fecb42fcc"
+  },
+  "nodeGroups": [],
+  "id": "nNUu3YZt6wsY25C5",
+  "tags": []
+}

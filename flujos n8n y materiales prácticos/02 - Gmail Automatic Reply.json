@@ -1,0 +1,81 @@
+{
+  "name": "Gmail Automatic Reply",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2df40c94-0c2f-4596-b431-ad8432208480",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "yfiqIr7Ql2KW0FUY",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $json[\"id\"] }}",
+        "message": "Hey, this is an automatic reply!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d337ff64-1c75-46a1-8df3-80a7e9743e4d",
+      "name": "Reply to a message",
+      "webhookId": "2b63cd18-bc5b-4796-91c5-bc3077c48dfe",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "yfiqIr7Ql2KW0FUY",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Reply to a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "752dcf51-dc74-4119-98a6-c5f4a61fce6f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "64482d7a14e81689aaebbf703d54e87c821063e375e43c30ccc74d502f1236a9"
+  },
+  "nodeGroups": [],
+  "id": "GmyE9QjXH9f56i8m",
+  "tags": []
+}
