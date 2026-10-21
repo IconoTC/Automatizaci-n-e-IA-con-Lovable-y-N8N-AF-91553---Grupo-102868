@@ -102,7 +102,7 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        1088,
+        1312,
         176
       ],
       "id": "97225cca-fd62-43f1-b8b7-c9315bec69e6",
@@ -170,8 +170,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        736,
-        0
+        768,
+        -16
       ],
       "typeVersion": 1,
       "id": "f3bb80fd-a322-4b72-9fbc-be1b6d54a7b1",
@@ -185,12 +185,40 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1008,
-        0
+        1216,
+        -16
       ],
       "typeVersion": 1,
       "id": "1685f6cb-4a78-46b7-b7a1-39ddbeeaeea9",
       "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  if (item.binary && item.binary.data) {\n    // Forzar el nombre del archivo con su extensión correcta\n    item.binary.data.fileName = 'grafico.png';\n  }\n}\nreturn $input.all();\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        176
+      ],
+      "id": "a2c52761-8c85-4391-ad08-a7367224ce41",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "content": "Pequeño script auxiliar para que el archivo binario con la imagen tenga forzosamente extensión .png antes de enviarlo por correo.",
+        "width": 160,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1024,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "0897594c-e54e-415b-b3d4-73b055a24bb4",
+      "name": "Sticky Note5"
     }
   ],
   "pinData": {},
@@ -232,6 +260,17 @@
       "main": [
         [
           {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
             "node": "Send a message",
             "type": "main",
             "index": 0
@@ -245,7 +284,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "fb1ecc7e-1b84-4729-a526-0db7f5ebf5d2",
+  "versionId": "11180415-8b59-4d9c-8e49-db0519d37031",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "960175be3c41fb259bea1cdf813ec95bc6101f03dad7f1c90348629fecb42fcc"
