@@ -1,0 +1,195 @@
+{
+  "name": "04 - Simple OpenAI workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "5bd3672a-0cab-4ba3-9f7e-0f1cb6513315",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -96,
+        0
+      ],
+      "id": "04b46d1d-da20-43cc-9958-d000d2fdc685",
+      "name": "Webhook",
+      "webhookId": "5bd3672a-0cab-4ba3-9f7e-0f1cb6513315"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f93fe57b-b58c-438d-8cff-d9fb46ddc4d4",
+              "name": "body.message",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "56f97722-7106-4809-8055-c73d874d489d",
+              "name": "prompt",
+              "value": "=Eres un asistente claro y didáctico.\n\nTarea:\n{{ $json.body.message }}\n\nInstrucciones:\n{{ $json.body.extra_context || \"\"}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        0
+      ],
+      "id": "f7783b60-5f81-4f0c-b58d-21280a3e2f3c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        336,
+        0
+      ],
+      "id": "4f351c04-5929-4aad-bf72-83c2a9515d61",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "content": "Una forma sencilla y gratuita de enviar peticiones HTTP POST a nuestro Webhook es mediante:\nhttps://reqbin.com/",
+        "height": 112,
+        "width": 304
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -208,
+        -128
+      ],
+      "typeVersion": 1,
+      "id": "5a11e77d-db30-4df3-8308-c0c5ad6e708f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "**OBTENER UNA API KEY THE GOOGLE AI STUDIO PARA DEFINIR TU CREDENCIAL DE ACCESO A MODELOS GEMINI:**\n\nhttps://aistudio.google.com/u/3/api-keys",
+        "height": 128,
+        "width": 368
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        352,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "6c6d2a15-0147-4a68-9c07-da896535dc03",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        192,
+        224
+      ],
+      "id": "9d834c82-6728-4839-a99f-5eb8e2c99af0",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        224
+      ],
+      "id": "904f1536-9c89-495e-9bf4-392f11c24a10",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5d0730eb-3d7c-4c0c-8fdd-fa012dfa6b55",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "960175be3c41fb259bea1cdf813ec95bc6101f03dad7f1c90348629fecb42fcc"
+  },
+  "nodeGroups": [],
+  "id": "azidoM9eb3TaEptu",
+  "tags": []
+}

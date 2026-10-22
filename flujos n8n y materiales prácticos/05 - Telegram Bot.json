@@ -1,0 +1,92 @@
+{
+  "name": "My workflow 5",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "944bb71b-b817-46b4-be9c-1b183f1058e0",
+      "name": "Telegram Trigger",
+      "webhookId": "6a435a21-5c2e-4d9b-beb8-c807fe08f7a9",
+      "credentials": {
+        "telegramApi": {
+          "id": "ecmhqmMEVvRItRea",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.from.id }}",
+        "text": "Mensaje recibido, ¡gracias!",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        0
+      ],
+      "id": "7293707a-906c-4e54-99c6-9a8ea9b10279",
+      "name": "Send a text message",
+      "webhookId": "9d4fe334-0f02-43a6-82c9-230072e0b755",
+      "credentials": {
+        "telegramApi": {
+          "id": "ecmhqmMEVvRItRea",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "#EJERCICIO PROPUESTO:\n\nDotar de inteligencia a nuestro chatbot, y que sea capaz de respondernos de forma similar a un humano o chatbot conversacional."
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        144,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "677e5032-52cd-47d3-be6c-20c3d930e613",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "006faee7-449e-490d-8ebc-527640d87f4f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "960175be3c41fb259bea1cdf813ec95bc6101f03dad7f1c90348629fecb42fcc"
+  },
+  "nodeGroups": [],
+  "id": "751SndoMypns9EWV",
+  "tags": []
+}
