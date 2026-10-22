@@ -1,0 +1,199 @@
+{
+  "name": "06 Manipulacion JSON",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d6e6a85c-81bd-4c51-8cd0-b2020877c244",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://randomuser.me/api/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        192,
+        0
+      ],
+      "id": "583f801a-3b4d-4644-a223-37ba5f5119a4",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3d1f8da2-e10b-4fda-9fed-544c3a8425ce",
+              "name": "=mensaje",
+              "value": "={{ $json.results[0].gender == 'female' ? 'Bienvenida' : 'Bienvenido'}} a nuestra plataforma.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        0
+      ],
+      "id": "7672965c-eca5-424e-bb2c-954f73ef1785",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "content": "**Ejemplos de expresiones para añadir en campos del nodo 'Edit Fields'**",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -272,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "cb5bf5d4-f589-4433-a3d6-8624a522f972",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Nombre: {{ $json.results[0].name.first }};\nApellido: {{ $json.results[0].name.last }}",
+        "height": 112
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -16,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "e4c32b9c-4929-48a1-87ed-6d4d8915d259",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "¡Hola {{ $json.results[0].name.first }}! Vemos que te conectas desde la ciudad de {{ $json.results[0].location.city }}. Tu email de contacto es {{ $json.results[0].email }}."
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        176
+      ],
+      "typeVersion": 1,
+      "id": "e8a2ad4a-fd6d-4fe4-b05f-19cbd9c711be",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Edad actual: {{ $json.results[0].dob.age }}.\nEdad dentro de una década: {{ $json.results[0].dob.age + 10 }}",
+        "height": 96
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        768,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "4d9d0025-4c8f-45d7-b5c7-60f6a334ebb0",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "{{ $json.results[0].name.first }} {{ $json.results[0].name.last }} es soci@ desde hace {{ $json.results[0].dob.age - $json.results[0].registered.age }} años."
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        496,
+        176
+      ],
+      "id": "053bcbc4-db95-4c79-8cb7-85971f18ac3e",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "Nombre del usuario en Mayúsculas: {{ $json.results[0].login.username.toUpperCase() }} "
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        768,
+        176
+      ],
+      "id": "1a136956-1090-4b0c-ad9a-0ddea5cf0ce8",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "{{ $json.results[0].gender == 'female' ? 'Bienvenida' : 'Bienvenido'}} a nuestra plataforma.\n\n**SINTAXIS SOBRE LA LÓGICA CONDICIONAL EN JAVASCRIPT**\n{{ <CONDICION> ? <RESULTADO SI ES VERDADERA> : <RESULTADO SI ES FALSA>}}\n\n\n",
+        "height": 96,
+        "width": 736
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        352
+      ],
+      "id": "250f73f1-30e4-4e5e-a55b-9e77997836fe",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "{{ $json.results[0].gender == 'female' ? 'Bienvenida' : 'Bienvenido'}} a nuestra plataforma."
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -272,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "d81ed24b-e36c-4086-9bb3-acaf02b30e64",
+      "name": "Sticky Note7"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "72985ce2-46a2-4f26-b32c-4c2e08ca7c97",
+  "meta": {
+    "instanceId": "64482d7a14e81689aaebbf703d54e87c821063e375e43c30ccc74d502f1236a9"
+  },
+  "nodeGroups": [],
+  "id": "GefuFPVKRw0rIjgp",
+  "tags": []
+}

@@ -1,0 +1,175 @@
+{
+  "name": "07 - Hola Mundo Python",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        208
+      ],
+      "id": "87c58891-96d9-46fe-90a1-e459716f715b",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0cdf14fd-5546-4dd3-8f03-90518138bc7d",
+              "name": "cliente",
+              "value": "jUAN perez",
+              "type": "string"
+            },
+            {
+              "id": "4ff770bc-51bc-422e-af33-5f8077699b6e",
+              "name": "precio",
+              "value": 9.95,
+              "type": "number"
+            },
+            {
+              "id": "54268065-2484-4702-ad26-10532b3cabf3",
+              "name": "edad",
+              "value": 39,
+              "type": "number"
+            },
+            {
+              "id": "b5b3994f-f80d-43d1-aeeb-a5d14f99100e",
+              "name": "first_name",
+              "value": "Ivan",
+              "type": "string"
+            },
+            {
+              "id": "6770eac5-dcdf-40b9-9ab9-dd2d7d042df6",
+              "name": "last_name",
+              "value": "Palomares",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        208
+      ],
+      "id": "74e9fe4a-62ec-4a07-bdf7-42ca937145aa",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "# Código compatible con n8n porque se usa Python nativo\n\nfor item in _items:\n  # Usamos .get() para obtener un campo\n  nombre = item[\"json\"].get(\"cliente\", \"desconocido\")\n\n  # Aplicar una limpieza y formato sencillos al texto\n  limpio = nombre.strip().title()\n\n  # Guardamos el resultado usando acceso por corchetes\n  item[\"json\"][\"saludo_personalizado\"] = f\"Hola {limpio}. Bienvenido al curso.\"\n\n\nreturn _items\n\n#\"jUAN perez\" -> strip() -> [\"jUAN\", \"perez\"] -> title() -> [\"Juan\", \"Perez\"]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        0
+      ],
+      "id": "0636dfee-7210-4261-99f8-3918029fbb55",
+      "name": "01 - Saludo personalizado"
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "precio_base = _items[0][\"json\"][\"precio\"]\nreturn {\n  \"total_con_iva\": precio_base * 1.21\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        0
+      ],
+      "id": "37047b3a-a51a-477c-b0e7-0e017ca6089c",
+      "name": "02 - Precio con IVA"
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "cliente_crudo = _items[0][\"json\"][\"cliente\"]\n\nreturn {\n  \"cliente_limpio\": cliente_crudo.title()\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        192
+      ],
+      "id": "95ee1017-d87d-49eb-be0b-11ec70479726",
+      "name": "03 - Iniciales cliente en mayúsculas"
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "edad_cliente = _items[0][\"json\"][\"edad\"]\n\nif edad_cliente >= 18:\n  estado = \"Aprobado\"\nelse:\n  estado = \"Rechazado\"\n\nreturn {\n  \"estado_final\": estado\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        192
+      ],
+      "id": "f9bbc9b7-cc99-47cf-8e89-e756b895d307",
+      "name": "04 - Comprobación edad"
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "nombre = _items[0][\"json\"][\"first_name\"]\napellido = _items[0][\"json\"][\"last_name\"]\n\nreturn {\n#Devolver un campo llamdo \"nombre completo\"_items\n\n\"Nombre completo\": f\"Hola {nombre} {apellido}\"\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        384
+      ],
+      "id": "211845c7-bf3a-45ad-8f67-45848b89368a",
+      "name": "05 - Fusionar nombre completo"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "01 - Saludo personalizado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "02 - Precio con IVA": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "57993b52-5fda-4b30-a609-87df01b259f4",
+  "meta": {
+    "instanceId": "960175be3c41fb259bea1cdf813ec95bc6101f03dad7f1c90348629fecb42fcc"
+  },
+  "nodeGroups": [],
+  "id": "TZ9sZhnqyCqZ78De",
+  "tags": []
+}
