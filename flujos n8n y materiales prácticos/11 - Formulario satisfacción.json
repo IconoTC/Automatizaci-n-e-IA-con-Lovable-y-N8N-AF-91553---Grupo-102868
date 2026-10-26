@@ -1,0 +1,121 @@
+{
+  "name": "11 - Formulario satisfacción",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Encuesta de Satisfacción",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Nombre"
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "Grado de satisfacción",
+              "fieldType": "number",
+              "defaultValue": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -16,
+        -96
+      ],
+      "id": "78eeeafc-b0ac-417c-ae00-90be2515dc2e",
+      "name": "On form submission",
+      "webhookId": "75fb2dd9-f497-4337-9652-fd203af3d1ef"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "77b3d4cb-19dc-4441-a130-b0f369296f60",
+              "name": "cuerpo_correo",
+              "value": "=Hola {{ $json.Nombre }}, gracias por calificarnos con un {{ $json['Grado de satisfacción'] }}. ¡Nos ayuda mucho a mejorar!",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        192,
+        -96
+      ],
+      "id": "9aaa7d1c-021b-4725-96a9-84e8c8ab140a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "sendTo": "gakudo.learn@gmail.com",
+        "subject": "Respuesta al formulario de satisfacción",
+        "emailType": "text",
+        "message": "={{ $json.cuerpo_correo }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        -96
+      ],
+      "id": "66db9736-eb45-4ae5-97f9-eb8ae9a3b790",
+      "name": "Send a message",
+      "webhookId": "5113aef9-98df-4e2c-905e-ea9e3a06d6dc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4YCvIQGWdZW6JHn3",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "320b3595-8805-4b7c-a17d-811805c6f429",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "960175be3c41fb259bea1cdf813ec95bc6101f03dad7f1c90348629fecb42fcc"
+  },
+  "nodeGroups": [],
+  "id": "paUgNjmc0KYtKB5t",
+  "tags": []
+}

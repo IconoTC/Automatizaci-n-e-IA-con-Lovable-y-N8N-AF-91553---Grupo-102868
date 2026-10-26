@@ -1,0 +1,322 @@
+{
+  "name": "09 - Conexión con BBDDs y Hojas de Cálculo",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        128,
+        256
+      ],
+      "id": "2c789a4e-3ade-4344-a5f4-6213d5443f3c",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1CPklMEssI5ycoBVYxLiaHHZMistp6HvJhpHseUB8i9Q",
+          "mode": "list",
+          "cachedResultName": "Mall customers spreadsheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CPklMEssI5ycoBVYxLiaHHZMistp6HvJhpHseUB8i9Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CPklMEssI5ycoBVYxLiaHHZMistp6HvJhpHseUB8i9Q/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        400,
+        256
+      ],
+      "id": "1843282c-2df2-497f-aace-72a0ff39457f",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1yLIkkswexc7hPFB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appOxtEHMm7FAwwCC",
+          "mode": "list",
+          "cachedResultName": "Base clientes",
+          "cachedResultUrl": "https://airtable.com/appOxtEHMm7FAwwCC"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblpXBvNCccxpsTd5",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appOxtEHMm7FAwwCC/tblpXBvNCccxpsTd5"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "Spending Score (1-100)": 0,
+            "Annual Income (k$)": 0,
+            "Age": 0,
+            "CustomerID": 0
+          },
+          "matchingColumns": [
+            "CustomerID"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "CustomerID",
+              "displayName": "CustomerID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Annual Income (k$)",
+              "displayName": "Annual Income (k$)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Spending Score (1-100)",
+              "displayName": "Spending Score (1-100)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "ignoreFields": "row_number"
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        656,
+        192
+      ],
+      "id": "8b2dec4d-c6ef-4fa1-8f7e-410d40711c31",
+      "name": "Create or update a record",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "PK7ZyGdCc2s7vfk5",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "Nw23LORDoyrvDLFu",
+          "mode": "list",
+          "cachedResultName": "clientes",
+          "cachedResultUrl": "/projects/QRqwhPtOTy23x45K/datatables/Nw23LORDoyrvDLFu"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $json.CustomerID }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "CustomerID": "={{ $json.CustomerID }}",
+            "Gender": "={{ $json.Gender }}",
+            "Age": "={{ $json.Age }}",
+            "Income": "={{ $json['Annual Income (k$)'] }}",
+            "Spending_score": "={{ $json['Spending Score (1-100)'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "CustomerID",
+              "displayName": "CustomerID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Income",
+              "displayName": "Income",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Spending_score",
+              "displayName": "Spending_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        400
+      ],
+      "id": "6b1f08a3-03c8-4f2f-9ddb-a469e309f354",
+      "name": "Upsert row(s)"
+    },
+    {
+      "parameters": {
+        "content": "**CREACIÓN DE CREDENCIAL PARA CONECTAR CON AIRTABLE: método más complejo pero seguro, alternativo al método simplificado OAuth2**\n\n1. Una vez registrados en Airtable, ir a: https://airtable.com/create/tokens para obtener un PAT (Personal Access Token) siguiendo los pasos 2 y 3 para su configuración y obtención. \n\n2. Dar los permisos (scopes):\n   data.records:read\n   data.records:write\n   schema.bases:read\n\n3. Acceder a todos los recursos o especificar los recursos (workspaces y bases) de Airtable a los que acceder, p.ej. \"Base clientes\"",
+        "height": 208,
+        "width": 1056
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        16,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "b207e879-7684-4d11-b015-88f8710ec9ab",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Upsert row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5f746289-aebb-4f95-9db4-3fc867d610eb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "960175be3c41fb259bea1cdf813ec95bc6101f03dad7f1c90348629fecb42fcc"
+  },
+  "nodeGroups": [],
+  "id": "uIMkvZXM5kGfVhu7",
+  "tags": []
+}

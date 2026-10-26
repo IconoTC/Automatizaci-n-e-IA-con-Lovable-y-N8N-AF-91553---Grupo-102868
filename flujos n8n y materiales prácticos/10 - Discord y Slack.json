@@ -1,0 +1,116 @@
+{
+  "name": "10 - Discord y Slack",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "6a4e05c7-2e9e-441b-bc8c-7fc9de8346c5",
+      "name": "Ejecución Manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0CCHN15RFA",
+          "mode": "list",
+          "cachedResultName": "grupo-n8n-indra-oct26"
+        },
+        "text": "¡Hola equipo! Este es un mensaje de prueba didáctico desde n8n. 🚀",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "b3b436bc-f7a8-430b-a16c-ae329f05f819",
+      "name": "Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        208
+      ],
+      "webhookId": "14507895-1ac1-4855-8021-d7ac84ffcf96",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "YkJSPdQRpfmjwn7L",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1426164038064275473",
+          "mode": "list",
+          "cachedResultName": "Globeando",
+          "cachedResultUrl": "https://discord.com/channels/1426164038064275473"
+        },
+        "sendTo": "user",
+        "userId": {
+          "__rl": true,
+          "value": "1187075544160936002",
+          "mode": "list",
+          "cachedResultName": "globeando"
+        },
+        "content": "Hola desde n8n, amig@.",
+        "options": {}
+      },
+      "id": "ae1c10eb-4cfb-470e-ad48-d16a4be20036",
+      "name": "Discord",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        320,
+        0
+      ],
+      "webhookId": "24e69bda-db61-4c65-a929-01d29e4a072a",
+      "credentials": {
+        "discordOAuth2Api": {
+          "id": "RDuhXe2tO3RdgMhh",
+          "name": "Discord account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Ejecución Manual": {
+      "main": [
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "cf948fac-9b99-459c-a983-1bc3e65e9a85",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "960175be3c41fb259bea1cdf813ec95bc6101f03dad7f1c90348629fecb42fcc"
+  },
+  "nodeGroups": [],
+  "id": "h07KWLtqvaW5oW9t",
+  "tags": []
+}
