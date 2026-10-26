@@ -1,0 +1,204 @@
+{
+  "name": "My workflow 8",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        0
+      ],
+      "id": "17ac2881-064a-4d88-8297-1a772007a7e1",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1CPklMEssI5ycoBVYxLiaHHZMistp6HvJhpHseUB8i9Q",
+          "mode": "list",
+          "cachedResultName": "Mall customers spreadsheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CPklMEssI5ycoBVYxLiaHHZMistp6HvJhpHseUB8i9Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CPklMEssI5ycoBVYxLiaHHZMistp6HvJhpHseUB8i9Q/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        16,
+        0
+      ],
+      "id": "cafa5a6e-2d85-4e84-b542-79936d8e1683",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1yLIkkswexc7hPFB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "Nw23LORDoyrvDLFu",
+          "mode": "list",
+          "cachedResultName": "customers",
+          "cachedResultUrl": "/projects/QRqwhPtOTy23x45K/datatables/Nw23LORDoyrvDLFu"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "CustomerID",
+              "keyValue": "={{ $json.CustomerID }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "CustomerID": "={{ $json.CustomerID }}",
+            "Gender": "={{ $json.Gender }}",
+            "Age": "={{ $json.Age }}",
+            "Income": "={{ $json['Annual Income (k$)'] }}",
+            "Spending_score": "={{ $json['Spending Score (1-100)'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "CustomerID",
+              "displayName": "CustomerID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Income",
+              "displayName": "Income",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Spending_score",
+              "displayName": "Spending_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "05d00b69-7b50-4aee-bf08-4f45f3b56db1",
+      "name": "Upsert row(s)"
+    },
+    {
+      "parameters": {
+        "content": "**AIRTABLE** (airtable.com)\n1. Registrarse.\n2. Tras registrarnos, creamos una nueva *Base*, llamada \"Base clientes\", y dentro de esta, una nueva tabla.",
+        "height": 112,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -128,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "a937d696-4fd0-48e7-99d4-489cd400a37f",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Upsert row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ab480456-5a70-4d58-8fb7-f828cc4c3916",
+  "meta": {
+    "instanceId": "960175be3c41fb259bea1cdf813ec95bc6101f03dad7f1c90348629fecb42fcc"
+  },
+  "nodeGroups": [],
+  "id": "4FVBiFHEx69LOyCH",
+  "tags": []
+}
