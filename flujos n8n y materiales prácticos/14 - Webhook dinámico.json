@@ -1,0 +1,109 @@
+{
+  "name": "14 - Webhook dinámico",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "saludo-dinamico2",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2d1d52b8-bdbd-4ae0-a8c5-3ea5cebc8a18",
+      "name": "Webhook",
+      "webhookId": "1dbe440e-90a9-4861-9c5e-f73c0661ad08"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a3b70b36-23b3-4153-b535-351ccfe775f5",
+              "name": "mensaje_final",
+              "value": "=¡Hola {{ $json.query.nombre }}! Tu petición ha sido procesada en tiempo real por n8n.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "472ae716-2323-455a-94ec-117fafe88c65",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        432,
+        0
+      ],
+      "id": "62562878-4cbc-4f67-b7b1-dfac1e49ee03",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "Desde reqbin.com, prueba a realizar una petición GET con el siguiente parámetro de consulta: \nhttps://[TU_INSTANCIA_N8N].app.n8n.cloud/webhook-test/saludo-dinamico2?nombre=Ivan\n(reemplaza 'Ivan' por tu nombre)\n\nEl webhook bidireccional (Respond to webhook) responderá con un saludo personalizado para ti",
+        "height": 112,
+        "width": 704
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        -128
+      ],
+      "typeVersion": 1,
+      "id": "e1f6ab37-d1c6-4848-9eac-a63112a33377",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a85566f2-d4e7-41db-b073-16961f371c6b",
+  "meta": {
+    "instanceId": "960175be3c41fb259bea1cdf813ec95bc6101f03dad7f1c90348629fecb42fcc"
+  },
+  "nodeGroups": [],
+  "id": "KHxKSZvg1S6GaFz0",
+  "tags": []
+}

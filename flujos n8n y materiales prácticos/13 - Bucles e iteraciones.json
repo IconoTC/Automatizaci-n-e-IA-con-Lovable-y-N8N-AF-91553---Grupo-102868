@@ -1,0 +1,408 @@
+{
+  "name": "13 - Bucles e iteraciones",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        320,
+        48
+      ],
+      "id": "d1e1f451-04d0-444e-810b-407bb48440d1",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://github.com/gakudo-ai/open-datasets/raw/refs/heads/main/asia_documents.zip",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        528,
+        48
+      ],
+      "id": "0eaa3b54-2481-4c27-84e2-a6042a4969cf",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.compression",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        48
+      ],
+      "id": "0752bb06-42d4-4f1d-937c-bfa1d3c5d6ec",
+      "name": "Compression"
+    },
+    {
+      "parameters": {
+        "jsCode": "const nuevosItems = [];\nconst itemsEntrada = $input.all();\n\n// Recorremos los items usando un índice (necesario para la función de n8n)\nfor (let i = 0; i < itemsEntrada.length; i++) {\n  const item = itemsEntrada[i];\n  \n  if (item.binary) {\n    for (const key of Object.keys(item.binary)) {\n      \n      // Utilizamos la herramienta nativa de n8n para obtener el archivo de forma segura, \n      // independientemente de si está en memoria o en disco.\n      const buffer = await this.helpers.getBinaryDataBuffer(i, key);\n      \n      // Ahora sí, convertimos el buffer real a texto\n      const textoDecodificado = buffer.toString('utf-8');\n      \n      nuevosItems.push({\n        json: {\n          nombre_archivo: item.binary[key].fileName || key,\n          contenido_texto: textoDecodificado\n        }\n      });\n    }\n  }\n}\n\nreturn nuevosItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        48
+      ],
+      "id": "6e955232-57c6-4bed-a82a-56c902c59b9e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1152,
+        48
+      ],
+      "id": "a51ccc95-1406-46b6-ab6d-83f222d3d553",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "content": "**Nodo de bucle**\nLa opción 'Batch Size' indica cuántos items procesar en cada iteración. Por defecto vale 1, lo que significa \"ir de 1 en 1\".",
+        "height": 112,
+        "width": 384
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1040,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "51a8637e-5caf-4bc0-80f1-d725fa019ee8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9a7c9966-f617-4561-a789-ad18aefa940a",
+              "leftValue": "={{ $json.contenido_texto }}",
+              "rightValue": "beach",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1360,
+        208
+      ],
+      "id": "a55256b9-5a5d-46a3-b2e5-6f7c326c986d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "afd047d1-231d-4e4e-98c0-9d84a12fe8e4",
+              "name": "categoria",
+              "value": "relevante",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1008,
+        208
+      ],
+      "id": "6c6eef11-2bfc-40f5-bd35-2b6613fc1be8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e7fd25e4-f8af-42ad-a60f-02316231efd1",
+              "name": "categoria",
+              "value": "irrelevante",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        816,
+        368
+      ],
+      "id": "e2e9345f-476c-44da-bfd9-cea0d5c1a7eb",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        -32
+      ],
+      "id": "da92522b-ff2e-4141-95ab-2342a01594e0",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Eres un experto en sintetizar contenido relevante y publicarlo en canales de Slack. Tu objetivo es crear un vistoso mensaje que sintetice la información contenida en los datos más abajo y que aparecen en formato JSON. Presta especial atención al campo categoría, que distingue países asiáticos destacados por sus playas de aquellos que no, mediante las etiquetas 'relevante' e 'irrelevante', respectivamente.\n\nDemuestra tus dotes de escritor y sintetiza información clave de estos nueve paises en no más de 200 palabras en total.\n\nNo me preguntes nada al final de tu respuesta, pues voy a utilizarla tal cual para el envío del mensaje.\n\n\n\nDATOS A ANALIZAR:\n\n{{ JSON.stringify($input.all().map(item => item.json), null, 2) }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1664,
+        -32
+      ],
+      "id": "557d013f-4845-4d20-b30d-3abbe81ce00c",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1600,
+        144
+      ],
+      "id": "f629d0a1-7a55-4ceb-951d-69092aa8e852",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0CCHN15RFA",
+          "mode": "list",
+          "cachedResultName": "grupo-n8n-indra-oct26"
+        },
+        "text": "={{ $json.text }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        2016,
+        -32
+      ],
+      "id": "51d60a79-63e7-4f18-8b32-373d8076baa3",
+      "name": "Send a message",
+      "webhookId": "69cdc5b2-ec05-4408-9a30-87546d92b5c5",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "YkJSPdQRpfmjwn7L",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Compression",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compression": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "1eae43b3-9616-4a97-b9e7-421e7569a544",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "960175be3c41fb259bea1cdf813ec95bc6101f03dad7f1c90348629fecb42fcc"
+  },
+  "nodeGroups": [],
+  "id": "irDquveLPxfyMHGA",
+  "tags": []
+}

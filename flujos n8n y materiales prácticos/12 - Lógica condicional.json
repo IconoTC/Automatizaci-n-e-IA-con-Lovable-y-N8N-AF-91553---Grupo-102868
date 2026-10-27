@@ -1,0 +1,493 @@
+{
+  "name": "12 - Lógica Condicional",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "### Lógica del Flujo:\n1. **IF**: Filtra casas caras vs baratas.\n2. **SWITCH**: Clasifica las casas caras según su cercanía al mar.\n3. **Resultados**: Permite ejecutar acciones distintas (emails, alertas) según la categoría.",
+        "height": 224,
+        "width": 340
+      },
+      "id": "11d00294-ecf8-40e9-bfa5-6cbe7f644feb",
+      "name": "Nota Explicativa",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        512,
+        32
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        256
+      ],
+      "id": "8ed880b1-adac-49e7-b1e1-6124adacdea8",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://raw.githubusercontent.com/gakudo-ai/open-datasets/main/housing.csv",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "91a9fd19-9934-452d-abca-3853196c429a",
+      "name": "Descargar Dataset",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        288,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.median_house_value }}",
+              "operation": "larger",
+              "value2": 200000
+            }
+          ]
+        }
+      },
+      "id": "10c25955-9a6a-4a74-8485-a22542f98575",
+      "name": "¿Es Cara (>200k)?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        960,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.ocean_proximity }}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "NEAR OCEAN"
+            },
+            {
+              "value2": "INLAND",
+              "output": 1
+            },
+            {
+              "value2": "NEAR BAY",
+              "output": 2
+            }
+          ]
+        },
+        "fallbackOutput": 3
+      },
+      "id": "3114947b-c124-4f1d-953b-0e8141ce0f9b",
+      "name": "Categoría por Ubicación",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "median_house_value"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d00e0ae2-2bbf-43e7-8e9a-f3b26068588a",
+      "name": "Ordenar por Precio",
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "id": "21d805d9-a0f8-4d70-acd1-c0eb0de51768",
+      "name": "Top 5 Chollos",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "013d56eb-8032-4d2b-aa5d-75e11edb5d86",
+              "name": "Categoria_VIP",
+              "value": "Villa Costera 🏖️",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "6da7644f-c17f-4544-8372-c74dc89628c3",
+      "name": "Etiqueta: Playa",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1568,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "42875b11-d00d-4034-8b6b-312d8a509ed5",
+              "name": "Categoria_VIP",
+              "value": "Refugio Interior ⛰️",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "20beaa07-75fb-4df4-9c94-c6aad62058ec",
+      "name": "Etiqueta: Interior",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1568,
+        160
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "6924dbb8-ce5c-4587-8bc5-41d74efc3f69",
+      "name": "Unir Catálogo VIP",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1824,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Nodo Sort. \n\nOrdena los items en una colección.",
+        "height": 96
+      },
+      "id": "566f0d6e-f5a5-45d4-9fab-4023cc6d088f",
+      "name": "Nota Explicativa1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        896,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Nodo Limit. \n\nRestringe items de una colección para mantener solo los X primeros, por ejemplo.",
+        "height": 144
+      },
+      "id": "b52efcd8-d85c-49e7-b309-4fa2132c9f25",
+      "name": "Nota Explicativa2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5a1f09bc-2e13-4784-a6d3-6c2f7d3ece31",
+              "name": "Categoría_VIP",
+              "value": "Chollazo 💸",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1664,
+        400
+      ],
+      "id": "20278df7-07a8-499d-94d4-1b8327b42255",
+      "name": "Etiqueta: Chollazo"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2080,
+        272
+      ],
+      "id": "2c052ca2-ee0b-4058-b966-03e15139d3f2",
+      "name": "Merge"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2288,
+        272
+      ],
+      "id": "2facea80-77fd-4a89-834b-ae88485df77a",
+      "name": "Wait",
+      "webhookId": "b39ad3d8-2b0f-432a-8251-624e933d4007"
+    },
+    {
+      "parameters": {
+        "content": "EJERCICIO PROPUESTO: Con toda la información recopilada sobre viviendas destacadas, confeccionar dos newsletters promocionales a enviar por dos canales de comunicación: email y Telegram",
+        "height": 224
+      },
+      "id": "a6351ee3-4f73-469e-9daa-2a4f80805cdf",
+      "name": "Nota Explicativa3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2192,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        304
+      ],
+      "id": "355b0378-6a67-47fd-b8a0-2d333d297e31",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4ef56b22-5223-4e7c-bb00-16814e6cfe0c",
+              "name": "median_house_value",
+              "value": "={{ Number($json.median_house_value) }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        736,
+        304
+      ],
+      "id": "c3e253cf-2cfe-4e65-9d34-5451e1592ceb",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Descargar Dataset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar Dataset": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Cara (>200k)?": {
+      "main": [
+        [
+          {
+            "node": "Categoría por Ubicación",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ordenar por Precio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ordenar por Precio": {
+      "main": [
+        [
+          {
+            "node": "Top 5 Chollos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Etiqueta: Playa": {
+      "main": [
+        [
+          {
+            "node": "Unir Catálogo VIP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Etiqueta: Interior": {
+      "main": [
+        [
+          {
+            "node": "Unir Catálogo VIP",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Categoría por Ubicación": {
+      "main": [
+        [
+          {
+            "node": "Etiqueta: Playa",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Etiqueta: Interior",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Top 5 Chollos": {
+      "main": [
+        [
+          {
+            "node": "Etiqueta: Chollazo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Etiqueta: Chollazo": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Unir Catálogo VIP": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "¿Es Cara (>200k)?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "bd981f32-8ce1-4637-9c51-437e3cc14f58",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "960175be3c41fb259bea1cdf813ec95bc6101f03dad7f1c90348629fecb42fcc"
+  },
+  "nodeGroups": [],
+  "id": "nwgMiGEsmq61h2rK",
+  "tags": []
+}
