@@ -1,0 +1,284 @@
+{
+  "name": "My workflow 18",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b8245de0-465b-4017-98ae-90ef31225027",
+      "name": "When clicking ‘Execute workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://github.com/gakudo-ai/open-datasets/raw/refs/heads/main/asia_documents.zip",
+        "options": {}
+      },
+      "id": "cedbe622-2c16-4838-8e70-c5742674d5cd",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -64,
+        -112
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "81854c18-434a-471c-9b69-28ca397ed3d2",
+      "name": "Compression",
+      "type": "n8n-nodes-base.compression",
+      "typeVersion": 1.1,
+      "position": [
+        112,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "$binary",
+        "options": {}
+      },
+      "id": "36a4682f-c753-431b-87c5-a65e06d2085a",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1.1,
+      "position": [
+        304,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "binaryPropertyName": "={{ Object.keys($binary)[0] }}",
+        "destinationKey": "text",
+        "options": {}
+      },
+      "id": "cbe5e4f5-32ca-41a1-b73e-2d59fe05892b",
+      "name": "Extract from File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => ({\n  json: {\n    inputs: item.json.text,  // Un texto a la vez\n    options: { wait_for_model: true }\n  },\n  pairedItem: { item: item.index }\n}));"
+      },
+      "id": "3d0c7daf-855f-4518-8514-d7e074bff8f6",
+      "name": "Code in JavaScript",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cohere.com/v1/embed",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"texts\": [ $json.inputs ], \"model\": \"embed-multilingual-light-v3.0\", \"input_type\": \"search_document\" }) }}",
+        "options": {}
+      },
+      "id": "89f5654c-4055-4c7a-a9f4-219016493518",
+      "name": "HTTP Request1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        928,
+        16
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "CKWFGNToEJM2Gfpl",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst vectors = items.map((item, i) => {\n  // Leemos la estructura exacta de 384 dimensiones que nos ha devuelto Cohere\n  const raw = item.json.embeddings[0];\n  \n  return {\n    id: 'doc-' + (i + 1),\n    values: raw, // Cohere ya entrega los vectores normalizados matemáticamente\n    metadata: { text: item.json.texts[0] } // Extraemos el texto directamente de la respuesta\n  };\n});\n\n// Empaquetamos todo en un único bloque para que Pinecone lo escriba de golpe\nreturn [{ json: { vectors } }];"
+      },
+      "id": "8e5199b5-474a-4d62-9f9b-7bcad792ef0c",
+      "name": "Code in JavaScript1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://asia-docs-6ye29tu.svc.aped-4627-b74a.pinecone.io/vectors/upsert",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "pineconeApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"vectors\": $json.vectors, \"namespace\": \"ivan\" }) }}",
+        "options": {}
+      },
+      "id": "3dcff580-0add-46d0-ae1a-20de22adbc93",
+      "name": "HTTP Request2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1376,
+        16
+      ],
+      "credentials": {
+        "pineconeApi": {
+          "id": "EmT2ke0ZDbjU5Wkv",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Posible solución para que la petición de inserción funcione:\n\nEn la URL pegada desde tu index de Pinecone, dentro de este nodo, añadir el sufijo al final:\n\n**/vectors/upsert**",
+        "width": 336
+      },
+      "id": "02f7dfc0-54c1-43e4-8a13-100338eacb92",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        -144
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Compression",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compression": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2ce52729-6027-4f6b-ae7d-1f540740d0d1",
+  "meta": {
+    "instanceId": "960175be3c41fb259bea1cdf813ec95bc6101f03dad7f1c90348629fecb42fcc"
+  },
+  "nodeGroups": [],
+  "id": "gMfxxhRkUdSocQ0D",
+  "tags": []
+}
